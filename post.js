@@ -36,10 +36,7 @@
         const dx = touch.clientX - startX;
         const dy = touch.clientY - startY;
         if (dx < -SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy)) {
-          window.pageNavigate(
-            backButton.getAttribute("href"),
-            backButton.dataset.navDir || "back"
-          );
+          window.pageNavigate(backButton.getAttribute("href"), "forward");
         }
       },
       { passive: true }
