@@ -3,7 +3,7 @@
 
   const archivedPosts = await getArchivedPosts();
   const items = archivedPosts.map((post) => {
-    const formattedDate = new Date(post.date + "T00:00:00").toLocaleDateString("en-US", {
+    const formattedDate = new Date(post.date).toLocaleDateString("en-US", {
       year: "numeric",
       month: "short",
       day: "numeric",

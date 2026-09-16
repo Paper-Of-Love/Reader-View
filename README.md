@@ -2,19 +2,24 @@
 
 A mobile-first blog homepage: a Tinder-style swipeable card carousel for recent
 posts, an archive for everything older, and individual post pages. Static
-HTML/CSS/JS, no build step, no framework.
+HTML/CSS/JS, no build step, no framework — but it's no longer standalone: it
+reads its posts live from the Backend Server.
 
 ## Running it locally
 
-The site fetches JSON at runtime, so it needs to be served over HTTP — opening
-`index.html` directly via `file://` will not work (fetch is blocked on the
-`file://` origin).
+This site needs the **Backend Server** running (see `../Backend Server/README.md`)
+— it has no local fallback data anymore. Start that first, then serve this
+folder over HTTP (opening `index.html` directly via `file://` won't work,
+since `fetch` is blocked on the `file://` origin):
 
 ```bash
 python3 -m http.server 8420
 ```
 
-Then open `http://localhost:8420`.
+Then open `http://localhost:8420`. `data.js` points at
+`http://localhost:4000/api` by default — change `API_BASE` there if the
+backend runs elsewhere. Make sure that backend's `.env` `ALLOWED_ORIGINS`
+includes `http://localhost:8420`.
 
 ## How pages fit together
 
@@ -23,7 +28,7 @@ Then open `http://localhost:8420`.
 | `index.html` / `app.js` | Homepage carousel of recent posts |
 | `archive.html` / `archive.js` | List of posts older than a week |
 | `post.html` / `post.js` | Single post view |
-| `data.js` | Shared data-loading helpers (fetches from `posts/`) |
+| `data.js` | Fetches published posts from the Backend Server's public API |
 | `transitions.js` | Page-to-page fade/slide transitions |
 | `scroll-header.js` | Auto-hides the post/archive header on scroll-down, reveals on scroll-up |
 | `styles.css` | All styles for every page |
@@ -41,67 +46,35 @@ Then open `http://localhost:8420`.
   fixed phone-width column centered on the page, instead of stretching to
   fill the browser width.
 
-## Adding a post
+## Where posts come from
 
-Posts live in `posts/`, one JSON file per post, plus `posts/index.json` which
-lists lightweight metadata (no body text) for the carousel and archive.
+There's no local post data or admin UI here anymore — this is a read-only
+public view. Posts are written in the **Typewriter** app and go live once an
+editor publishes them in the **Editor Controller**; this site just fetches
+whatever is currently published from `GET /api/posts` on the backend and
+renders it. See those two apps' READMEs for how content actually gets created.
 
-1. Add an entry to `posts/index.json`:
+`data.js` maps the backend's fields to what these pages expect:
 
-   ```json
-   {
-     "slug": "my-new-post",
-     "title": "My New Post",
-     "author": "Your Name",
-     "date": "2026-09-20",
-     "image": "images/my-new-post/hero.jpg"
-   }
-   ```
-
-2. Create `posts/my-new-post.json` with the same fields plus a `body`:
-
-   ```json
-   {
-     "slug": "my-new-post",
-     "title": "My New Post",
-     "author": "Your Name",
-     "date": "2026-09-20",
-     "image": "images/my-new-post/hero.jpg",
-     "body": "First paragraph.\n\nSecond paragraph."
-   }
-   ```
-
-`slug` must be unique and match the filename. `date` is `YYYY-MM-DD`.
+- `byline` (falling back to `author`) → displayed as the post's author.
+- `publishedAt` → the date used both for display and for the recent/archived
+  split.
+- An `image` path that starts with `/` (an upload, e.g. `/uploads/xyz.jpg`) is
+  resolved against the backend's own origin, since uploaded files are served
+  by the backend, not this site.
 
 ### Recent vs. archived
 
 A post appears in the homepage carousel if it was published within the last
-7 days (computed against the visitor's current system time); otherwise it
-shows up in the archive. This is fully dynamic — nothing is hardcoded, so a
-post moves from the carousel to the archive on its own once a week has
-passed.
-
-### Images
-
-Store a post's own images under `images/<slug>/` and reference them with a
-relative path (e.g. `images/my-new-post/hero.jpg`) instead of hotlinking to an
-external URL. Both remote URLs and local files work identically, since it's
-just an `<img src>` under the hood. JPG, PNG, WebP, and SVG are all fine.
-
-To add an inline image inside the body text (not just the hero image at the
-top), put it on its own line surrounded by blank lines, markdown-style:
-
-```
-First paragraph.
-
-![Caption text](images/my-new-post/detail.jpg)
-
-More text after the image.
-```
+7 days (computed against the visitor's current system time, using the
+backend's `publishedAt` timestamp); otherwise it shows up in the archive.
+This is fully dynamic — nothing is hardcoded, so a post moves from the
+carousel to the archive on its own once a week has passed.
 
 ### Text formatting
 
-The `body` field supports basic inline styling:
+Post bodies support basic inline styling, written by the Typewriter and
+rendered here:
 
 | Syntax | Result |
 |---|---|
@@ -109,13 +82,13 @@ The `body` field supports basic inline styling:
 | `*italic*` | *italic* |
 | `__underline__` | underline |
 | `~~strikethrough~~` | ~~strikethrough~~ |
-
-Paragraphs are separated by a blank line (`\n\n` in the JSON string).
+| `![caption](image url)` on its own line | an inline image with caption |
 
 ## Notes
 
-- There's no backend or upload form — adding a post or image means editing
-  files directly in this repo.
 - `sessionStorage` is used to remember which carousel card you were on and
   which direction you navigated in (for matching page transition animations),
   not for anything that needs to persist across browser sessions.
+- If the backend is unreachable, `data.js` fails soft: the carousel and
+  archive just render empty rather than throwing, and a post page shows its
+  "couldn't be found" state.

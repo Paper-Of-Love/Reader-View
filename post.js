@@ -81,7 +81,7 @@
     })
     .join("");
 
-  const formattedDate = new Date(post.date + "T00:00:00").toLocaleDateString("en-US", {
+  const formattedDate = new Date(post.date).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
