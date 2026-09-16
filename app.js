@@ -19,7 +19,7 @@
     `;
     card.addEventListener("click", () => {
       if (didDrag) return;
-      window.pageNavigate(`post.html?slug=${encodeURIComponent(post.slug)}`);
+      window.pageNavigate(`post.html?slug=${encodeURIComponent(post.slug)}&entry=up`, "up");
     });
     track.appendChild(card);
   });
@@ -192,5 +192,11 @@
     const saved = sessionStorage.getItem(STORAGE_KEY);
     if (saved !== null) restoredIndex = parseInt(saved, 10) || 0;
   } catch (e) {}
+
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("advance") === "1") {
+    restoredIndex += 1;
+  }
+
   goTo(restoredIndex, true);
 })();

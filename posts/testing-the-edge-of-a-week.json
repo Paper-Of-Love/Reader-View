@@ -2,7 +2,7 @@
   "slug": "testing-the-edge-of-a-week",
   "title": "Testing the Edge of a Week",
   "author": "Dana Kaplan",
-  "date": "2026-09-09",
+  "date": "2026-09-10",
   "image": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=800&fit=crop",
   "body": "This post exists purely to check date math.\n\nIt was published on September 9th, which should fall inside the rolling seven-day window when today is September 15th."
 }
