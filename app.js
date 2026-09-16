@@ -13,7 +13,7 @@
     card.className = "card";
     card.innerHTML = `
       <div class="card-image-wrap">
-        <img src="${post.image}" alt="${post.title}" draggable="false">
+        <img class="img-cover" src="${post.image}" alt="${post.title}" draggable="false">
       </div>
       <h2 class="card-title">${post.title}</h2>
     `;
@@ -59,11 +59,44 @@
     return true;
   }
 
+  function lockAxis(dx, dy) {
+    return Math.abs(dx) > Math.abs(dy) ? "x" : "y";
+  }
+
+  function applyDragTransform(dx) {
+    const percent = (dx / carousel.clientWidth) * 100;
+    track.style.transform = `translateX(calc(-${current * 100}% + ${percent}%))`;
+  }
+
+  function finishDrag(axis, dx, dy) {
+    track.style.transition = "";
+    if (axis === "x") {
+      const threshold = carousel.clientWidth * 0.2;
+      if (dx < -threshold) {
+        goTo(current + 1);
+      } else if (dx > threshold) {
+        goTo(current - 1);
+      } else {
+        goTo(current);
+      }
+    } else if (axis === "y") {
+      const threshold = carousel.clientHeight * 0.12;
+      if (dy < -threshold) {
+        if (!openCurrentPost()) goTo(current);
+      } else {
+        goTo(current);
+      }
+    } else {
+      goTo(current);
+    }
+  }
+
+  let deltaX = 0;
+  let deltaY = 0;
+
   // Touch swipe
   let startX = 0;
   let startY = 0;
-  let deltaX = 0;
-  let deltaY = 0;
   let dragging = false;
   let lockedAxis = null;
 
@@ -86,7 +119,7 @@
     const dy = t.clientY - startY;
 
     if (lockedAxis === null) {
-      lockedAxis = Math.abs(dx) > Math.abs(dy) ? "x" : "y";
+      lockedAxis = lockAxis(dx, dy);
     }
     if (lockedAxis === "y") {
       deltaY = dy;
@@ -97,33 +130,13 @@
     e.preventDefault();
     deltaX = dx;
     if (Math.abs(deltaX) > 8) didDrag = true;
-    const percent = (deltaX / carousel.clientWidth) * 100;
-    track.style.transform = `translateX(calc(-${current * 100}% + ${percent}%))`;
+    applyDragTransform(deltaX);
   }, { passive: false });
 
   carousel.addEventListener("touchend", () => {
     if (!dragging) return;
     dragging = false;
-    track.style.transition = "";
-    if (lockedAxis === "x") {
-      const threshold = carousel.clientWidth * 0.2;
-      if (deltaX < -threshold) {
-        goTo(current + 1);
-      } else if (deltaX > threshold) {
-        goTo(current - 1);
-      } else {
-        goTo(current);
-      }
-    } else if (lockedAxis === "y") {
-      const threshold = carousel.clientHeight * 0.12;
-      if (deltaY < -threshold) {
-        if (!openCurrentPost()) goTo(current);
-      } else {
-        goTo(current);
-      }
-    } else {
-      goTo(current);
-    }
+    finishDrag(lockedAxis, deltaX, deltaY);
   });
 
   // Mouse drag support for desktop testing
@@ -149,7 +162,7 @@
     const dy = e.clientY - mouseStartY;
 
     if (mouseAxis === null && (Math.abs(dx) > 8 || Math.abs(dy) > 8)) {
-      mouseAxis = Math.abs(dx) > Math.abs(dy) ? "x" : "y";
+      mouseAxis = lockAxis(dx, dy);
     }
     if (mouseAxis === "y") {
       deltaY = dy;
@@ -159,31 +172,13 @@
 
     deltaX = dx;
     if (Math.abs(deltaX) > 8) didDrag = true;
-    const percent = (deltaX / carousel.clientWidth) * 100;
-    track.style.transform = `translateX(calc(-${current * 100}% + ${percent}%))`;
+    applyDragTransform(deltaX);
   });
 
   window.addEventListener("mouseup", () => {
     if (!mouseDown) return;
     mouseDown = false;
-    track.style.transition = "";
-    if (mouseAxis === "y") {
-      const threshold = carousel.clientHeight * 0.12;
-      if (deltaY < -threshold) {
-        if (!openCurrentPost()) goTo(current);
-      } else {
-        goTo(current);
-      }
-      return;
-    }
-    const threshold = carousel.clientWidth * 0.2;
-    if (deltaX < -threshold) {
-      goTo(current + 1);
-    } else if (deltaX > threshold) {
-      goTo(current - 1);
-    } else {
-      goTo(current);
-    }
+    finishDrag(mouseAxis, deltaX, deltaY);
   });
 
   // Keyboard arrows for desktop testing

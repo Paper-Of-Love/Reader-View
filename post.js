@@ -10,6 +10,42 @@
     backButton.dataset.navDir = "down";
   }
 
+  (function setupSwipeBack() {
+    const SWIPE_THRESHOLD = 60;
+    let startX = 0;
+    let startY = 0;
+    let tracking = false;
+
+    document.addEventListener(
+      "touchstart",
+      (e) => {
+        if (e.touches.length !== 1) return;
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+        tracking = true;
+      },
+      { passive: true }
+    );
+
+    document.addEventListener(
+      "touchend",
+      (e) => {
+        if (!tracking) return;
+        tracking = false;
+        const touch = e.changedTouches[0];
+        const dx = touch.clientX - startX;
+        const dy = touch.clientY - startY;
+        if (dx < -SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy)) {
+          window.pageNavigate(
+            backButton.getAttribute("href"),
+            backButton.dataset.navDir || "back"
+          );
+        }
+      },
+      { passive: true }
+    );
+  })();
+
   if (!post) {
     main.innerHTML = `
       <p class="post-not-found">That post couldn't be found.</p>
@@ -53,7 +89,7 @@
 
   main.innerHTML = `
     <div class="post-image-wrap">
-      <img src="${post.image}" alt="${post.title}">
+      <img class="img-cover" src="${post.image}" alt="${post.title}">
     </div>
     <h1 class="post-title">${post.title}</h1>
     <p class="post-byline">By ${post.author} &middot; ${formattedDate}</p>

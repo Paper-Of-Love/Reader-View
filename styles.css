@@ -5,6 +5,7 @@
   --text-muted: #6b6b6b;
   --accent: #1a1a1a;
   --dot-inactive: #d9d6d1;
+  --backdrop: #e5e2dc;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -15,6 +16,7 @@
     --text-muted: #a3a3a3;
     --accent: #f2f0ec;
     --dot-inactive: #3a3a3a;
+    --backdrop: #050505;
   }
 }
 
@@ -86,6 +88,21 @@ body.page-leaving-down {
   transition: opacity 0.16s ease, transform 0.16s ease;
 }
 
+@media (min-width: 560px) {
+  html {
+    background: var(--backdrop);
+    display: flex;
+    justify-content: center;
+  }
+
+  body {
+    width: 100%;
+    max-width: 480px;
+    min-height: 100vh;
+    box-shadow: 0 0 60px rgba(0, 0, 0, 0.25);
+  }
+}
+
 .site-header {
   padding: 20px 20px 8px;
   flex-shrink: 0;
@@ -123,8 +140,19 @@ body.page-leaving-down {
   cursor: pointer;
 }
 
+.img-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
 .end-card {
   cursor: default;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 20px;
 }
 
 .card-image-wrap {
@@ -138,10 +166,6 @@ body.page-leaving-down {
 }
 
 .card-image-wrap img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
   -webkit-user-drag: none;
   user-select: none;
 }
@@ -152,13 +176,6 @@ body.page-leaving-down {
   line-height: 1.15;
   letter-spacing: -0.02em;
   margin: 20px 0 10px;
-}
-
-.end-card {
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  gap: 20px;
 }
 
 .end-message {
@@ -214,6 +231,11 @@ body.page-leaving-down {
   padding: 16px 20px;
   background: var(--bg);
   z-index: 10;
+  transition: transform 0.25s ease;
+}
+
+.post-header.header-hidden {
+  transform: translateY(-100%);
 }
 
 .back-button {
@@ -240,13 +262,6 @@ body.page-leaving-down {
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-}
-
-.post-image-wrap img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
 }
 
 .post-title {
@@ -320,13 +335,6 @@ body.page-leaving-down {
   height: 72px;
   border-radius: 12px;
   overflow: hidden;
-}
-
-.archive-item-thumb img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
 }
 
 .archive-item-text {

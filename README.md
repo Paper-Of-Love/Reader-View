@@ -25,7 +25,21 @@ Then open `http://localhost:8420`.
 | `post.html` / `post.js` | Single post view |
 | `data.js` | Shared data-loading helpers (fetches from `posts/`) |
 | `transitions.js` | Page-to-page fade/slide transitions |
+| `scroll-header.js` | Auto-hides the post/archive header on scroll-down, reveals on scroll-up |
 | `styles.css` | All styles for every page |
+
+## Interactions
+
+- **Swipe left/right** on the homepage carousel to move between recent posts.
+- **Swipe up** on a carousel card to open that post (slides up; the post's
+  back button then slides back down to return).
+- **Swipe left** anywhere on a post page to go back, same as tapping the back
+  arrow.
+- **Scroll down** on a post or archive page to hide the header; scroll up (or
+  reach the top) to bring it back.
+- On screens 560px or wider (e.g. a laptop), the whole app scales down to a
+  fixed phone-width column centered on the page, instead of stretching to
+  fill the browser width.
 
 ## Adding a post
 
@@ -40,8 +54,7 @@ lists lightweight metadata (no body text) for the carousel and archive.
      "title": "My New Post",
      "author": "Your Name",
      "date": "2026-09-20",
-     "image": "images/my-new-post/hero.jpg",
-     "excerpt": "One sentence describing the post."
+     "image": "images/my-new-post/hero.jpg"
    }
    ```
 
@@ -54,7 +67,6 @@ lists lightweight metadata (no body text) for the carousel and archive.
      "author": "Your Name",
      "date": "2026-09-20",
      "image": "images/my-new-post/hero.jpg",
-     "excerpt": "One sentence describing the post.",
      "body": "First paragraph.\n\nSecond paragraph."
    }
    ```

@@ -11,7 +11,7 @@
     return `
       <a class="archive-item" href="post.html?slug=${encodeURIComponent(post.slug)}&from=archive">
         <div class="archive-item-thumb">
-          <img src="${post.image}" alt="${post.title}">
+          <img class="img-cover" src="${post.image}" alt="${post.title}">
         </div>
         <div class="archive-item-text">
           <h2 class="archive-item-title">${post.title}</h2>
