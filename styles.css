@@ -36,6 +36,9 @@ html {
 }
 
 body {
+  --tx: 16px;
+  --ty: 0px;
+  --sc: 1;
   background: var(--bg);
   color: var(--text);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -43,49 +46,64 @@ body {
   flex-direction: column;
   overflow: hidden;
   opacity: 0;
-  transform: translateX(16px);
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transform: translate(var(--tx), var(--ty)) scale(var(--sc));
+  transition: opacity 0.26s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.26s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 body.enter-back {
-  transform: translateX(-16px);
+  --tx: -16px;
 }
 
 body.enter-up {
-  transform: translateY(16px);
+  --tx: 0px;
+  --ty: 28px;
+  --sc: 0.96;
 }
 
 body.enter-down {
-  transform: translateY(-16px);
+  --tx: 0px;
+  --ty: -28px;
+  --sc: 0.96;
 }
 
 body.page-visible {
+  --tx: 0px;
+  --ty: 0px;
+  --sc: 1;
   opacity: 1;
-  transform: translateX(0);
+}
+
+body.page-leaving-forward,
+body.page-leaving-back,
+body.page-leaving-up,
+body.page-leaving-down {
+  opacity: 0;
+  transition: opacity 0.18s ease, transform 0.18s ease;
 }
 
 body.page-leaving-forward {
-  opacity: 0;
-  transform: translateX(-16px);
-  transition: opacity 0.16s ease, transform 0.16s ease;
+  --tx: -16px;
+  --ty: 0px;
+  --sc: 1;
 }
 
 body.page-leaving-back {
-  opacity: 0;
-  transform: translateX(16px);
-  transition: opacity 0.16s ease, transform 0.16s ease;
+  --tx: 16px;
+  --ty: 0px;
+  --sc: 1;
 }
 
 body.page-leaving-up {
-  opacity: 0;
-  transform: translateY(-16px);
-  transition: opacity 0.16s ease, transform 0.16s ease;
+  --tx: 0px;
+  --ty: -28px;
+  --sc: 0.96;
 }
 
 body.page-leaving-down {
-  opacity: 0;
-  transform: translateY(16px);
-  transition: opacity 0.16s ease, transform 0.16s ease;
+  --tx: 0px;
+  --ty: 28px;
+  --sc: 0.96;
 }
 
 @media (min-width: 560px) {

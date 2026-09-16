@@ -36,7 +36,10 @@
         const dx = touch.clientX - startX;
         const dy = touch.clientY - startY;
         if (dx < -SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy)) {
-          window.pageNavigate(backButton.getAttribute("href"), "forward");
+          const backHref = backButton.getAttribute("href");
+          const target =
+            backHref === "index.html" ? "index.html?advance=1" : backHref;
+          window.pageNavigate(target, "forward");
         }
       },
       { passive: true }
