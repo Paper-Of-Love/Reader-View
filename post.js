@@ -61,7 +61,8 @@
       .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
       .replace(/~~(.+?)~~/g, "<s>$1</s>")
       .replace(/__(.+?)__/g, "<u>$1</u>")
-      .replace(/\*(.+?)\*/g, "<em>$1</em>");
+      .replace(/\*(.+?)\*/g, "<em>$1</em>")
+      .replace(/\n/g, "<br>");
   }
 
   const paragraphs = post.body
