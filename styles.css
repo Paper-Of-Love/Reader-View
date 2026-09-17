@@ -303,6 +303,8 @@ body.page-leaving-down {
   line-height: 1.6;
   color: var(--text);
   margin: 0 0 16px;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .post-inline-image {
