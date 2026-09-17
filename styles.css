@@ -269,6 +269,8 @@ body.page-leaving-down {
 }
 
 .post-main {
+  width: 100%;
+  min-width: 0;
   padding: 4px 20px 40px;
   max-width: 640px;
   margin: 0 auto;

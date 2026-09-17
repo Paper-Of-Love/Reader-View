@@ -61,24 +61,46 @@
       .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
       .replace(/~~(.+?)~~/g, "<s>$1</s>")
       .replace(/__(.+?)__/g, "<u>$1</u>")
-      .replace(/\*(.+?)\*/g, "<em>$1</em>")
-      .replace(/\n/g, "<br>");
+      .replace(/\*(.+?)\*/g, "<em>$1</em>");
+  }
+
+  function renderImage(alt, src) {
+    return `
+      <figure class="post-inline-image">
+        <img src="${src}" alt="${alt}" loading="lazy">
+        ${alt ? `<figcaption>${alt}</figcaption>` : ""}
+      </figure>
+    `;
   }
 
   const paragraphs = post.body
     .split("\n\n")
     .map((block) => {
-      const match = block.trim().match(IMAGE_LINE);
-      if (match) {
-        const [, alt, src] = match;
-        return `
-          <figure class="post-inline-image">
-            <img src="${src}" alt="${alt}" loading="lazy">
-            ${alt ? `<figcaption>${alt}</figcaption>` : ""}
-          </figure>
-        `;
+      const lines = block.split("\n").filter((line) => line.trim() !== "");
+      const htmlPieces = [];
+      let textLines = [];
+
+      function flushTextLines() {
+        if (textLines.length === 0) return;
+        htmlPieces.push(
+          `<p class="post-paragraph">${textLines.map(formatInline).join("<br>")}</p>`
+        );
+        textLines = [];
       }
-      return `<p class="post-paragraph">${formatInline(block)}</p>`;
+
+      lines.forEach((line) => {
+        const match = line.trim().match(IMAGE_LINE);
+        if (match) {
+          flushTextLines();
+          const [, alt, src] = match;
+          htmlPieces.push(renderImage(alt, src));
+        } else {
+          textLines.push(line);
+        }
+      });
+      flushTextLines();
+
+      return htmlPieces.join("");
     })
     .join("");
 
