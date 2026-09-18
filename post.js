@@ -58,6 +58,7 @@
 
   function formatInline(text) {
     return text
+      .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
       .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
       .replace(/~~(.+?)~~/g, "<s>$1</s>")
       .replace(/__(.+?)__/g, "<u>$1</u>")

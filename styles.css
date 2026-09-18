@@ -307,6 +307,13 @@ body.page-leaving-down {
   word-break: break-word;
 }
 
+.post-paragraph a {
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-color: var(--text-muted);
+  text-underline-offset: 2px;
+}
+
 .post-inline-image {
   margin: 4px 0 20px;
 }
